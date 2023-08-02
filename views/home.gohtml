@@ -9,16 +9,18 @@
     <h1>Welcome to our library!</h1>
     <br>
     <div class="row">
-      <% books.forEach(function(book) { if (book.quantity > 0) { %>
+      {{range books}}
+      {{if .quantity > 0}}
       <div class="col-md-4">
         <div class="card mb-3">
           <div class="card-body">
-            <h5 class="card-title"><%= book.title %></h5>
-            <p class="card-text">Quantity: <%= book.quantity %></p>
+            <h5 class="card-title">{{.title}}</h5>
+            <p class="card-text">Quantity: {{.quantity}}</p>
           </div>
         </div>
       </div>
-      <% }}); %>
+      {{end}}
+      {{end}}
     </div>
   
     <br>
@@ -27,9 +29,11 @@
       <div class="form-group">
         <label for="bookId">Choose a book:</label>
         <select class="form-control" id="requestBook" name="bookId">
-          <% books.forEach(function(book) { if (book.quantity > 0) { %>
-          <option value="<%= book.id %>"><%= book.title %></option>
-          <% }}); %>
+          {{range books}}
+          {{if .quantity > 0}}
+          <option value="{{.id}}">{{.title}}</option>
+          {{end}}
+          {{end}}
         </select>
       </div>
       <button type="submit" class="btn btn-primary btn-sm">Submit Request</button>
@@ -39,36 +43,36 @@
   
     <h3>Books Owned:</h3>
     <ul>
-      <% ownedbooks.forEach(function(book) { %>
-      <li><%= book.title %></li>
-      <% }) %>
+      {{range ownedbooks}}
+      <li>{{.title}}</li>
+      {{end}}
     </ul>
   
-    <% if (ownedbooks.length === 0) { %>
+    {{if (eq (len ownedbooks) 0)}}
       <h4>None</h4>
-    <% } else {%>
+    {{else}}
       
     <form action="/return-book" method="POST">
       <div class="form-group">
         <label for="book">Select a book to return:</label>
         <select class="form-control" id="returnBook" name="bookId">
-          <% ownedbooks.forEach(function(book) { %>
-          <option value="<%= book.id %>"><%= book.title %></option>
-          <% }); %>
+          {{range ownedbooks}}
+          <option value="{{.id}}">{{.title}}</option>
+          {{end}}
         </select>
       </div>
       <button type="submit" class="btn btn-primary">Submit checkin request</button>
     </form>
-    <% } %>
+    {{end}}
 
   
-    <% console.log(isadminrequested); if (isadminrequested) {%>
+    {{if isadminrequested}}
       <button id="requestAdminBtn" class="btn btn-outline-secondary" disabled>Requested for admin!</button>
-    <% } else { %>
+    {{else}}
       <form action="/request-admin" method="POST">
         <button id="requestAdminBtn" type="submit" class="btn btn-outline-secondary">Request Admin Access</button>
       </form>
-    <% } %>
+    {{end}}
   </div>
   
 
