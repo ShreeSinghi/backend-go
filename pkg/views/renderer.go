@@ -6,7 +6,7 @@ import (
 )
 
 func RenderTemplate(w http.ResponseWriter, fname string, data interface{}) {
-	tmpl, err := template.ParseFiles("templates/" + fname + ".gohtml")
+	tmpl, err := template.ParseFiles("templates/" + fname + ".html")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

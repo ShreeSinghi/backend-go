@@ -5,30 +5,31 @@ import (
 	"log"
 	"mvc/pkg/models"
 	"net/http"
+	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func main() {
-	router := gin.Default()
+func processChecks(w http.ResponseWriter, r *http.Request) {
 
-	router.POST("/process-checks", processChecks)
+	userId := r.Context().Value("userId").(int)
+	admin := r.Context().Value("admin").(bool)
 
-	router.Run(":8080")
-}
+	db, err := models.Connection()
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+	defer db.Close()
 
-func processChecks(c *gin.Context) {
+	r.ParseForm()
 
-	db, err = models.Connection()
-	admin := c.PostForm("admin")
-	checkRequests := c.Request.PostForm
+	checkRequests := r.PostForm
 	delete(checkRequests, "admin")
 	delete(checkRequests, "userId")
 
-	if admin == "" {
-		c.JSON(http.StatusForbidden, gin.H{
-			"msg": "Not authenticated",
-		})
+	if !admin {
+		http.Error(w, "Not authenticated", http.StatusForbidden)
 		return
 	}
 
@@ -40,7 +41,7 @@ func processChecks(c *gin.Context) {
 		}
 
 		if state == "inrequested" {
-			if checkRequests[requestId] == "approve" {
+			if checkRequests[requestId][0] == "approve" {
 				_, err := db.Exec("UPDATE books SET quantity = quantity + 1 WHERE id = ?", requestId)
 				if err != nil {
 					log.Fatal(err)
@@ -59,22 +60,26 @@ func processChecks(c *gin.Context) {
 				}
 			}
 		} else {
-			if checkRequests[requestId] == "approve" {
-				_, err := db.Exec("UPDATE requests SET state='owned' WHERE id = ${db.escape(requestId)}")
+			if checkRequests[requestId][0] == "approve" {
+				_, err := db.Exec("UPDATE requests SET state='owned' WHERE id = ?", requestId)
 				if err != nil {
 					log.Fatal(err)
 				}
-				fmt.Println(requestId, "apprived")
+				fmt.Println(requestId, "approved")
 			} else {
-				fmt.Println(results)
-				_, err = db.Exec("UPDATE books SET quantity=quantity+1 WHERE id = ${results[0].bookId}")
+				bookIDStr := r.FormValue("bookId")
+				bookID, err := strconv.Atoi(bookIDStr)
 				if err != nil {
 					log.Fatal(err)
 				}
-				_, err = db.Exec("DELETE FROM requests WHERE id = ${db.escape(requestId)}")
+
+				_, err = db.Exec("UPDATE books SET quantity=quantity+1 WHERE id = ?", bookID)
+				if err != nil {
+					log.Fatal(err)
+				}
+				_, err = db.Exec("DELETE FROM requests WHERE id = ?", requestId)
 				if err != nil {
 					fmt.Println(requestId, "denied")
-
 				}
 			}
 		}

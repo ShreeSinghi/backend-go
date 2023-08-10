@@ -15,11 +15,10 @@ func Login(username string, password string) ([]byte, error) {
 
 	var (
 		id   int
-		salt string
 		hash string
 	)
 
-	err = db.QueryRow("SELECT id, salt, hash FROM users WHERE username = $1", username).Scan(&id, &salt, &hash)
+	err = db.QueryRow(`SELECT id, hash FROM users WHERE username = (?)`, username).Scan(&id, &hash)
 
 	if err != nil {
 		log.Println("Error during login:", err)

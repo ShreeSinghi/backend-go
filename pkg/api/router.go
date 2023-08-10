@@ -10,10 +10,13 @@ import (
 func Start() {
 	r := mux.NewRouter()
 
-	r.HandleFunc("/login", controllers.LoginHandler).Methods("GET")
-	r.HandleFunc("/login", controllers.LoginPostHandler).Methods("POST")
-	r.HandleFunc("/register", RegisterHandler).Methods("GET")
-	r.HandleFunc("/register", RegisterPostHandler).Methods("POST")
+	r.HandleFunc("/login", 			controllers.Authenticate(controllers.LoginHandler)).Methods("GET")
+	r.HandleFunc("/login", 			controllers.Authenticate(controllers.LoginPostHandler)).Methods("POST")
+	r.HandleFunc("/register", 		controllers.Authenticate(controllers.RegisterHandler)).Methods("GET")
+	r.HandleFunc("/register", 		controllers.Authenticate(controllers.RegisterPostHandler)).Methods("POST")
+	r.HandleFunc("/home", 			controllers.Authenticate(controllers.HomeHandler)).Methods("GET")
+	r.HandleFunc("/process-checks", controllers.Authenticate(controllers.processChecks)).Methods("POST")
+
 
 	http.ListenAndServe(":8000", r)
 }

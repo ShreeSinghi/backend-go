@@ -36,3 +36,4 @@ CREATE TABLE requests (
   FOREIGN KEY (bookId) REFERENCES books(id),
   FOREIGN KEY (userId) REFERENCES users(id)
 );
+

@@ -1,15 +1,15 @@
 package controllers
 
 import (
+	"fmt"
+	"log"
 	"mvc/pkg/models"
+	"mvc/pkg/views"
 	"net/http"
-	"text/template"
 )
 
-var tmpl = template.Must(template.ParseGlob("views/*"))
-
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl.ExecuteTemplate(w, "register.gohtml", nil)
+	views.RenderTemplate(w, "register", nil)
 }
 
 func RegisterPostHandler(w http.ResponseWriter, r *http.Request) {
@@ -18,24 +18,30 @@ func RegisterPostHandler(w http.ResponseWriter, r *http.Request) {
 
 	if username == "" || password == "" {
 		http.Error(w, "Empty username or password", http.StatusBadRequest)
+
 		return
 	}
 
 	hash, err := models.HashKaro(password)
 	if err != nil {
 		http.Error(w, "Error hashing password", http.StatusInternalServerError)
+		log.Fatal(err)
+
 		return
 	}
 
-	userID, err := models.RegisterUser(username, hash)
+	userId, err := models.RegisterUser(username, hash)
 	if err != nil {
 		http.Error(w, "Error registering user", http.StatusInternalServerError)
+		log.Fatal(err)
 		return
 	}
 
-	err = models.CreateCookie(userID)
+	err = models.CreateCookie(userId)
+	fmt.Println(err)
 	if err != nil {
 		http.Error(w, "Error creating cookie", http.StatusInternalServerError)
+		log.Fatal(err)
 		return
 	}
 

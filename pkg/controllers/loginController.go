@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"log"
 	"mvc/pkg/models"
 	"mvc/pkg/views"
@@ -22,11 +23,11 @@ func LoginPostHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	// http.SetCookie(w, &http.Cookie{
-	// 	Name:     "sessionID",
-	// 	Value:    fmt.Sprintf("%x", newSessionID),
-	// 	HttpOnly: true,
-	// })
+	http.SetCookie(w, &http.Cookie{
+		Name:     "sessionID",
+		Value:    fmt.Sprintf("%x", newSessionID),
+		HttpOnly: true,
+	})
 
 	http.Redirect(w, r, "/home", http.StatusSeeOther)
 }
