@@ -1,5 +1,7 @@
 package models
 
+import "fmt"
+
 type Book struct {
 	ID       int    //
 	Title    string //`db:"title"`
@@ -48,7 +50,11 @@ func GetDataUser(userID int, checkoutStatus string) (interface{}, error) {
 		if err != nil {
 			panic(err)
 		}
-		booksResult = append(booksResult, book)
+
+		if book.Quantity > 0 {
+			booksResult = append(booksResult, book)
+		}
+
 	}
 
 	var requestsResult []Request
@@ -68,7 +74,7 @@ func GetDataUser(userID int, checkoutStatus string) (interface{}, error) {
 	}
 
 	var userresult User
-	err = db.QueryRow("SELECT * FROM users WHERE id=(?)", userID).Scan(&userresult.ID, &userresult.Username, &userresult.Requested)
+	err = db.QueryRow("SELECT id, username, requested FROM users WHERE id=(?)", userID).Scan(&userresult.ID, &userresult.Username, &userresult.Requested)
 	if err != nil {
 		return nil, err
 	}
@@ -85,17 +91,20 @@ func GetDataUser(userID int, checkoutStatus string) (interface{}, error) {
 		}
 	}
 
+	fmt.Println(booksResult[0])
+
 	data := map[string]interface{}{
-		"books":            booksResult,
-		"isadminrequested": userresult.Requested,
-		"ownedbooks":       ownedBooks,
-		"checkoutStatus":   checkoutStatus,
+		"books":          booksResult,
+		"userData":       userresult,
+		"ownedBooks":     ownedBooks,
+		"checkoutStatus": checkoutStatus,
 	}
 
 	return data, nil
 }
 
 func GetDataAdmin() (interface{}, error) {
+
 	db, err := Connection()
 	if err != nil {
 		return nil, err
@@ -131,7 +140,9 @@ func GetDataAdmin() (interface{}, error) {
 		if err != nil {
 			return nil, err
 		}
-		booksResult = append(booksResult, book)
+		if book.Quantity > 0 {
+			booksResult = append(booksResult, book)
+		}
 	}
 
 	outList := make([]Request, 0)
@@ -152,13 +163,14 @@ func GetDataAdmin() (interface{}, error) {
 	}
 
 	usersResult := make([]User, 0)
-	rows, err = db.Query("SELECT * FROM users WHERE requested = true")
+	rows, err = db.Query("SELECT id, username, requested FROM users WHERE requested = true")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
+		fmt.Println("meow")
 		var user User
 		err := rows.Scan(&user.ID, &user.Username, &user.Requested)
 		if err != nil {
@@ -166,7 +178,7 @@ func GetDataAdmin() (interface{}, error) {
 		}
 		usersResult = append(usersResult, user)
 	}
-
+	fmt.Println(usersResult)
 	data := map[string]interface{}{
 		"booksout": outList,
 		"booksin":  inList,

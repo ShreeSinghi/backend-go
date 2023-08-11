@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"log"
 	"mvc/pkg/models"
 	"mvc/pkg/views"
@@ -30,17 +29,9 @@ func RegisterPostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userId, err := models.RegisterUser(username, hash)
+	_, err = models.RegisterUser(username, hash)
 	if err != nil {
 		http.Error(w, "Error registering user", http.StatusInternalServerError)
-		log.Fatal(err)
-		return
-	}
-
-	err = models.CreateCookie(userId)
-	fmt.Println(err)
-	if err != nil {
-		http.Error(w, "Error creating cookie", http.StatusInternalServerError)
 		log.Fatal(err)
 		return
 	}

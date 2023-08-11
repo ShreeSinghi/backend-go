@@ -13,9 +13,13 @@ func Start() {
 	r.HandleFunc("/login", 			controllers.LoginHandler).Methods("GET")
 	r.HandleFunc("/login", 			controllers.LoginPostHandler).Methods("POST")
 	r.HandleFunc("/register", 		controllers.RegisterHandler).Methods("GET")
-	r.HandleFunc("/register", 		controllers.Authenticate(controllers.RegisterPostHandler)).Methods("POST")
+	r.HandleFunc("/register", 		controllers.RegisterPostHandler).Methods("POST")
 	r.HandleFunc("/home", 			controllers.Authenticate(controllers.HomeHandler)).Methods("GET")
 	r.HandleFunc("/process-checks", controllers.Authenticate(controllers.ProcessChecks)).Methods("POST")
+
+	r.HandleFunc("/process-checks", controllers.Authenticate(controllers.ProcessChecks)).Methods("POST")
+	r.HandleFunc("/add-book", 		controllers.Authenticate(controllers.AddBook)).Methods("POST")
+	r.HandleFunc("/process-admin-requests", controllers.Authenticate(controllers.ProcessAdminRequests)).Methods("POST")
 
 
 	http.ListenAndServe(":8000", r)

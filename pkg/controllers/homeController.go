@@ -21,6 +21,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 	} else {
+
 		data, err := models.GetDataUser(userId, "")
 		views.RenderTemplate(w, "home", data)
 		if err != nil {

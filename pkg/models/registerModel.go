@@ -17,7 +17,6 @@ func RegisterUser(username, hash string) (int, error) {
 	}
 
 	err = db.QueryRow(`SELECT id FROM users WHERE username = ?`, username).Scan(&userID)
-	fmt.Println(err)
 
 	if err == sql.ErrNoRows {
 		admin := 0
@@ -39,16 +38,9 @@ func RegisterUser(username, hash string) (int, error) {
 		}
 		return int(userID), nil
 	}
+	if err != nil {
+		panic(err)
+	}
 	// fmt.Println("user already exists")
 	return 0, errors.New("user already exists")
-}
-
-func CreateCookie(userID int) error {
-	db, err := Connection()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	_, err = db.Exec(`INSERT INTO cookies (userId) VALUES (?)`, userID)
-	return err
 }
