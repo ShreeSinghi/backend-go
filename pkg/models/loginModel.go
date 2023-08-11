@@ -1,12 +1,14 @@
 package models
 
 import (
-	"crypto/rand"
 	"errors"
+	"fmt"
 	"log"
+
+	"github.com/google/uuid"
 )
 
-func Login(username string, password string) ([]byte, error) {
+func Login(username string, password string) (string, error) {
 	db, err := Connection()
 
 	if err != nil {
@@ -25,14 +27,16 @@ func Login(username string, password string) ([]byte, error) {
 	}
 
 	if id == 0 || !MatchKaro(password, hash) {
-		return []byte{}, errors.New("invalid username or password")
+		return "", errors.New("invalid username or password")
 	}
 
-	newSessionID := make([]byte, 16)
-	_, err = rand.Read(newSessionID)
+	sessionString := uuid.New().String()
+	fmt.Println(sessionString)
+
+	_, err = db.Exec(`INSERT INTO cookies (userID, sessionID) VALUES (?, ?)`, id, sessionString)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return newSessionID, nil
+	return sessionString, nil
 }

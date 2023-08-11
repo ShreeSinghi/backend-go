@@ -10,9 +10,9 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func processChecks(w http.ResponseWriter, r *http.Request) {
+func ProcessChecks(w http.ResponseWriter, r *http.Request) {
 
-	userId := r.Context().Value("userId").(int)
+	//userId := r.Context().Value("userId").(int)
 	admin := r.Context().Value("admin").(bool)
 
 	db, err := models.Connection()

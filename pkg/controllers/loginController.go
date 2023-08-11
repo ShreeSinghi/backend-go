@@ -14,18 +14,20 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func LoginPostHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("rghrthr")
 	r.ParseForm()
 	username := r.PostFormValue("username")
 	password := r.PostFormValue("password")
+	fmt.Println(username, password)
 
-	newSessionID, err := models.Login(username, password)
+	sessionString, err := models.Login(username, password)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	http.SetCookie(w, &http.Cookie{
 		Name:     "sessionID",
-		Value:    fmt.Sprintf("%x", newSessionID),
+		Value:    sessionString,
 		HttpOnly: true,
 	})
 

@@ -15,6 +15,7 @@ func Authenticate(cookieid string) (int, bool) {
 
 	err = db.QueryRow("SELECT users.id, users.admin FROM users, cookies WHERE cookies.sessionid = (?);", cookieid).Scan(&userId, &admin)
 	if err != nil {
+		log.Println(cookieid)
 		log.Fatal(err)
 	}
 	return userId, admin
