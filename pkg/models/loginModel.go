@@ -33,7 +33,7 @@ func Login(username string, password string) (string, error) {
 	sessionString := uuid.New().String()
 	fmt.Println(sessionString)
 
-	_, err = db.Exec(`INSERT INTO cookies (userID, sessionID) VALUES (?, ?)`, id, sessionString)
+	_, err = db.Exec(`INSERT INTO cookies (userId, sessionID) VALUES (?, ?)`, id, sessionString)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -10,8 +10,8 @@ type Book struct {
 
 type Request struct {
 	ID     int    // `db:"id"`
-	BookID int    //`db:"book_id"`
-	UserID int    //`db:"user_id"`
+	bookId int    //`db:"book_id"`
+	UserId int    //`db:"user_id"`
 	State  string //`db:"state"`
 	Title  string // not unpacked by db directly
 
@@ -26,11 +26,11 @@ type User struct {
 
 type Cookie struct {
 	ID        int    // `db:"id"`
-	UserID    int    //`db:"userId"`
+	UserId    int    //`db:"UserId"`
 	SessionID string //`db:"sessionId"`
 }
 
-func GetDataUser(userID int, checkoutStatus string) (interface{}, error) {
+func GetDataUser(userId int, checkoutStatus string) (interface{}, error) {
 	db, err := Connection()
 	if err != nil {
 		return nil, err
@@ -58,7 +58,7 @@ func GetDataUser(userID int, checkoutStatus string) (interface{}, error) {
 	}
 
 	var requestsResult []Request
-	rows, err = db.Query("SELECT * FROM requests WHERE userId=(?)", userID)
+	rows, err = db.Query("SELECT * FROM requests WHERE userId=(?)", userId)
 
 	if err != nil {
 		return nil, err
@@ -66,7 +66,7 @@ func GetDataUser(userID int, checkoutStatus string) (interface{}, error) {
 
 	for rows.Next() {
 		var request Request
-		err := rows.Scan(&request.ID, &request.BookID, &request.UserID, &request.State)
+		err := rows.Scan(&request.ID, &request.bookId, &request.UserId, &request.State)
 		if err != nil {
 			panic(err)
 		}
@@ -74,7 +74,7 @@ func GetDataUser(userID int, checkoutStatus string) (interface{}, error) {
 	}
 
 	var userresult User
-	err = db.QueryRow("SELECT id, username, requested FROM users WHERE id=(?)", userID).Scan(&userresult.ID, &userresult.Username, &userresult.Requested)
+	err = db.QueryRow("SELECT id, username, requested FROM users WHERE id=(?)", userId).Scan(&userresult.ID, &userresult.Username, &userresult.Requested)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +83,7 @@ func GetDataUser(userID int, checkoutStatus string) (interface{}, error) {
 	for _, request := range requestsResult {
 		if request.State == "owned" || request.State == "inrequested" {
 			for _, book := range booksResult {
-				if book.ID == request.BookID {
+				if book.ID == request.bookId {
 					ownedBooks = append(ownedBooks, book)
 					break
 				}
@@ -112,7 +112,7 @@ func GetDataAdmin() (interface{}, error) {
 	defer db.Close()
 
 	var requestsResult []Request
-	rows, err := db.Query("SELECT * FROM requests WHERE state IN ('outrequested', 'inrequested')")
+	rows, err := db.Query("SELECT id, userId, bookId, state FROM requests WHERE state IN ('outrequested', 'inrequested')")
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +120,7 @@ func GetDataAdmin() (interface{}, error) {
 
 	for rows.Next() {
 		var request Request
-		err := rows.Scan(&request.ID, &request.UserID, &request.BookID, &request.State)
+		err := rows.Scan(&request.ID, &request.UserId, &request.bookId, &request.State)
 		if err != nil {
 			return nil, err
 		}
@@ -150,11 +150,13 @@ func GetDataAdmin() (interface{}, error) {
 
 	for _, request := range requestsResult {
 		for _, book := range booksResult {
-			if request.BookID == book.ID {
+			fmt.Println(request.bookId, book.ID)
+			if request.bookId == book.ID {
 				request.Title = book.Title
 				break
 			}
 		}
+		fmt.Println(request.Title, request.UserId, request.State)
 		if request.State == "outrequested" {
 			outList = append(outList, request)
 		} else if request.State == "inrequested" {
@@ -178,7 +180,7 @@ func GetDataAdmin() (interface{}, error) {
 		}
 		usersResult = append(usersResult, user)
 	}
-	fmt.Println(usersResult)
+
 	data := map[string]interface{}{
 		"booksout": outList,
 		"booksin":  inList,

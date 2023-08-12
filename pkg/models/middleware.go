@@ -1,9 +1,5 @@
 package models
 
-import (
-	"fmt"
-)
-
 func Authenticate(cookieid string) (int, bool) {
 	db, err := Connection()
 	if err != nil {
@@ -23,8 +19,6 @@ func Authenticate(cookieid string) (int, bool) {
 	if err != nil {
 		panic(err)
 	}
-
-	fmt.Println(userId, admin, cookieid)
 
 	return userId, admin
 

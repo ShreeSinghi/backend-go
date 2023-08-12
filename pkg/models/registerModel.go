@@ -8,7 +8,7 @@ import (
 )
 
 func RegisterUser(username, hash string) (int, error) {
-	var userID int
+	var userId int
 
 	db, err := Connection()
 
@@ -16,13 +16,13 @@ func RegisterUser(username, hash string) (int, error) {
 		log.Fatal(err)
 	}
 
-	err = db.QueryRow(`SELECT id FROM users WHERE username = ?`, username).Scan(&userID)
+	err = db.QueryRow(`SELECT id FROM users WHERE username = ?`, username).Scan(&userId)
 
 	if err == sql.ErrNoRows {
 		admin := 0
 
 		// check if this is the first user then make them admin
-		err = db.QueryRow(`SELECT id FROM users`).Scan(&userID)
+		err = db.QueryRow(`SELECT id FROM users`).Scan(&userId)
 		if err == sql.ErrNoRows {
 			admin = 1
 		}
@@ -32,11 +32,11 @@ func RegisterUser(username, hash string) (int, error) {
 			return 0, err
 		}
 
-		userID, err := res.LastInsertId()
+		userId, err := res.LastInsertId()
 		if err != nil {
 			return 0, err
 		}
-		return int(userID), nil
+		return int(userId), nil
 	}
 	if err != nil {
 		panic(err)

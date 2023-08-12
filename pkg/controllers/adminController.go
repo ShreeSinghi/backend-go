@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"mvc/pkg/models"
 	"net/http"
 	"strconv"
@@ -76,6 +77,7 @@ func ProcessAdminRequests(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
 	requestedUsers := r.PostForm
+	log.Println(requestedUsers)
 	err := models.ProcessAdminRequests(requestedUsers)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
