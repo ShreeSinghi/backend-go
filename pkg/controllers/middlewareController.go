@@ -18,8 +18,8 @@ func Authenticate(next http.HandlerFunc) http.HandlerFunc {
 			userId, admin, authorised := models.Authenticate(cookieid)
 
 			ctx := context.WithValue(r.Context(), "userId", userId)
-			ctx = context.WithValue(ctx, "admin", admin)
-			ctx = context.WithValue(ctx, "authorised", authorised)
+			ctx  = context.WithValue(ctx, "admin", admin)
+			ctx  = context.WithValue(ctx, "authorised", authorised)
 
 			next.ServeHTTP(w, r.WithContext(ctx))
 		}

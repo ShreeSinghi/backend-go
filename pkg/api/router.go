@@ -26,5 +26,7 @@ func Start() {
 
 	r.HandleFunc("/", controllers.Authenticate(controllers.DefaultHandler)).Methods("GET")
 
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+
 	http.ListenAndServe(":8000", r)
 }
