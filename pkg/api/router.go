@@ -24,5 +24,7 @@ func Start() {
 	r.HandleFunc("/return-book", controllers.Authenticate(controllers.ReturnBook)).Methods("POST")
 	r.HandleFunc("/request-checkout", controllers.Authenticate(controllers.RequestCheckout)).Methods("POST")
 
+	r.HandleFunc("/", controllers.Authenticate(controllers.DefaultHandler)).Methods("GET")
+
 	http.ListenAndServe(":8000", r)
 }

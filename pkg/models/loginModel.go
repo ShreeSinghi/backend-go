@@ -1,14 +1,13 @@
 package models
 
 import (
-	"errors"
 	"fmt"
 	"log"
 
 	"github.com/google/uuid"
 )
 
-func Login(username string, password string) (string, error) {
+func Login(username string, password string) (string, error, bool) {
 	db, err := Connection()
 
 	if err != nil {
@@ -27,7 +26,7 @@ func Login(username string, password string) (string, error) {
 	}
 
 	if id == 0 || !MatchKaro(password, hash) {
-		return "", errors.New("invalid username or password")
+		return "", nil, false
 	}
 
 	sessionString := uuid.New().String()
@@ -38,5 +37,5 @@ func Login(username string, password string) (string, error) {
 		log.Fatal(err)
 	}
 
-	return sessionString, nil
+	return sessionString, nil, true
 }

@@ -36,5 +36,17 @@ func RegisterPostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/login", http.StatusSeeOther)
+	sessionString, err, _ := models.Login(username, password)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "sessionID",
+		Value:    sessionString,
+		HttpOnly: true,
+	})
+
+	http.Redirect(w, r, "/home", http.StatusSeeOther)
+
 }

@@ -9,7 +9,14 @@ import (
 
 func AddBook(w http.ResponseWriter, r *http.Request) {
 	// Fetch user authentication data from the context
+
 	admin := r.Context().Value("admin").(bool)
+	authorised := r.Context().Value("authorised").(bool)
+
+	if !authorised {
+		http.Error(w, "Not authenticated", http.StatusForbidden)
+	}
+
 	title := r.FormValue("title")
 	quantityStr := r.FormValue("quantity")
 	quantity, err := strconv.Atoi(quantityStr)
@@ -41,6 +48,12 @@ func ProcessChecks(w http.ResponseWriter, r *http.Request) {
 	// Fetch user authentication data from the context
 	admin := r.Context().Value("admin").(bool)
 
+	authorised := r.Context().Value("authorised").(bool)
+
+	if !authorised {
+		http.Error(w, "Not authenticated", http.StatusForbidden)
+	}
+
 	db, err := models.Connection()
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -68,6 +81,11 @@ func ProcessChecks(w http.ResponseWriter, r *http.Request) {
 func ProcessAdminRequests(w http.ResponseWriter, r *http.Request) {
 	// Fetch user authentication data from the context
 	admin := r.Context().Value("admin").(bool)
+	authorised := r.Context().Value("authorised").(bool)
+
+	if !authorised {
+		http.Error(w, "Not authenticated", http.StatusForbidden)
+	}
 
 	if !admin {
 		http.Error(w, "Not authenticated", http.StatusForbidden)

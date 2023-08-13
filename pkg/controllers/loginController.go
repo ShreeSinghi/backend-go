@@ -18,18 +18,30 @@ func LoginPostHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	username := r.PostFormValue("username")
 	password := r.PostFormValue("password")
+
+	data := struct {
+		Error string
+	}{
+		Error: "Invalid username or password",
+	}
+
 	fmt.Println(username, password)
 
-	sessionString, err := models.Login(username, password)
+	sessionString, err, success := models.Login(username, password)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	http.SetCookie(w, &http.Cookie{
-		Name:     "sessionID",
-		Value:    sessionString,
-		HttpOnly: true,
-	})
+	if !success {
+		views.RenderTemplate(w, "login", data)
+	} else {
+		http.SetCookie(w, &http.Cookie{
+			Name:     "sessionID",
+			Value:    sessionString,
+			HttpOnly: true,
+		})
 
-	http.Redirect(w, r, "/home", http.StatusSeeOther)
+		http.Redirect(w, r, "/home", http.StatusSeeOther)
+	}
+
 }
