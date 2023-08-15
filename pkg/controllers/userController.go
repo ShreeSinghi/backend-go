@@ -5,19 +5,33 @@ import (
 	"fmt"
 	"log"
 	"mvc/pkg/models"
+	"mvc/pkg/views"
 	"net/http"
 	"strconv"
 )
 
+func ViewRequestReturn(w http.ResponseWriter, r *http.Request) {
+
+	userId := r.Context().Value("userId").(int)
+
+	data, err := models.GetDataUser(userId, "")
+	views.RenderTemplate(w, "request-return", data)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+}
+
 func RequestCheckout(w http.ResponseWriter, r *http.Request) {
 
 	var requestBody struct {
-		bookId string `json:"bookId, string"`
+		BookId string `json:"bookId"`
 	}
 
 	userId := r.Context().Value("userId").(int)
 
 	r.ParseForm()
+	fmt.Println(r.Body)
 	err := json.NewDecoder(r.Body).Decode(&requestBody)
 	if err != nil {
 		log.Fatal(requestBody)
@@ -25,9 +39,9 @@ func RequestCheckout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	bookId := requestBody.bookId
+	bookId := requestBody.BookId
 
-	fmt.Println(bookId)
+	fmt.Println(bookId, "meow")
 	bookIdint, err := strconv.Atoi(bookId)
 
 	if err != nil {
@@ -44,17 +58,22 @@ func RequestCheckout(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(data)
 }
 
-func ReturnBook(w http.ResponseWriter, r *http.Request) {
+func RequestCheckin(w http.ResponseWriter, r *http.Request) {
 	userId := r.Context().Value("userId").(int)
+	var requestBody map[string]string
+	err := json.NewDecoder(r.Body).Decode(&requestBody)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
-	bookIdStr := r.FormValue("bookId")
-	bookId, err := strconv.Atoi(bookIdStr)
+	bookId, err := strconv.Atoi(requestBody["bookId"])
 	if err != nil {
 		http.Error(w, "Invalid book ID", http.StatusBadRequest)
 		return
 	}
 
-	err = models.ReturnBook(bookId, userId)
+	err = models.RequestCheckin(bookId, userId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -65,8 +84,6 @@ func ReturnBook(w http.ResponseWriter, r *http.Request) {
 
 func RequestAdmin(w http.ResponseWriter, r *http.Request) {
 	userId := r.Context().Value("userId").(int)
-
-	fmt.Println("yoo")
 
 	err := models.RequestAdmin(userId)
 	if err != nil {

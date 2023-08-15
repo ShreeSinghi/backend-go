@@ -1,6 +1,9 @@
 package models
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+)
 
 type Book struct {
 	ID       int    //
@@ -84,6 +87,7 @@ func GetDataUser(userId int, checkoutStatus string) (interface{}, error) {
 		if request.State == "owned" || request.State == "inrequested" {
 			for _, book := range booksResult {
 				if book.ID == request.bookId {
+					log.Println(book)
 					ownedBooks = append(ownedBooks, book)
 					break
 				}
@@ -181,7 +185,10 @@ func GetDataAdmin() (interface{}, error) {
 		usersResult = append(usersResult, user)
 	}
 
+	log.Println(booksResult)
+
 	data := map[string]interface{}{
+		"books":    booksResult,
 		"booksout": outList,
 		"booksin":  inList,
 		"users":    usersResult,

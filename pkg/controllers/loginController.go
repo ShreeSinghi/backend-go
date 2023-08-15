@@ -5,15 +5,16 @@ import (
 	"log"
 	"mvc/pkg/models"
 	"mvc/pkg/views"
+	"strings"
 
 	"net/http"
 )
 
-func LoginHandler(w http.ResponseWriter, r *http.Request) {
+func ViewLogin(w http.ResponseWriter, r *http.Request) {
 	views.RenderTemplate(w, "login", nil)
 }
 
-func LoginPostHandler(w http.ResponseWriter, r *http.Request) {
+func Login(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("rghrthr")
 	r.ParseForm()
 	username := r.PostFormValue("username")
@@ -42,6 +43,32 @@ func LoginPostHandler(w http.ResponseWriter, r *http.Request) {
 		})
 
 		http.Redirect(w, r, "/home", http.StatusSeeOther)
+	}
+
+}
+
+func Logout(w http.ResponseWriter, r *http.Request) {
+	authorised := r.Context().Value("authorised").(bool)
+	log.Println("hey")
+
+	if !authorised {
+		http.Error(w, "Not authenticated", http.StatusForbidden)
+
+	} else {
+		log.Println("hasdasey")
+
+		oldcookie := r.Header.Get("Cookie")
+		cookieid := oldcookie[strings.Index(oldcookie, "sessionID=")+10:]
+		models.Logout(cookieid)
+
+		cookie := http.Cookie{
+			Name:     "sessionID",
+			Value:    "",
+			MaxAge:   -1,
+			HttpOnly: true,
+		}
+		http.SetCookie(w, &cookie)
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
 	}
 
 }

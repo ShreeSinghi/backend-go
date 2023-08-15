@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func HomeHandler(w http.ResponseWriter, r *http.Request) {
+func ViewHome(w http.ResponseWriter, r *http.Request) {
 
 	userId := r.Context().Value("userId").(int)
 	admin := r.Context().Value("admin").(bool)
@@ -28,5 +28,4 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 			log.Fatal(err)
 		}
 	}
-
 }

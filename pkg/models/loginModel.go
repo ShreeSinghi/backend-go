@@ -39,3 +39,11 @@ func Login(username string, password string) (string, error, bool) {
 
 	return sessionString, nil, true
 }
+
+func Logout(cookieid string) {
+	db, err := Connection()
+	_, err = db.Exec("DELETE FROM cookies WHERE sessionId = ?", cookieid)
+	if err != nil {
+		log.Fatal(err)
+	}
+}

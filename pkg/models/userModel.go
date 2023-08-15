@@ -42,7 +42,7 @@ func RequestCheckout(bookId int, userId int) (interface{}, error) {
 	return GetDataUser(userId, "Checkout request submitted")
 }
 
-func ReturnBook(bookId int, userId int) error {
+func RequestCheckin(bookId int, userId int) error {
 	db, err := Connection()
 	if err != nil {
 		return err

@@ -7,11 +7,11 @@ import (
 	"net/http"
 )
 
-func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+func ViewRegister(w http.ResponseWriter, r *http.Request) {
 	views.RenderTemplate(w, "register", nil)
 }
 
-func RegisterPostHandler(w http.ResponseWriter, r *http.Request) {
+func Register(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 

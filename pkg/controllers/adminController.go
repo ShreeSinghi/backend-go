@@ -3,9 +3,70 @@ package controllers
 import (
 	"log"
 	"mvc/pkg/models"
+	"mvc/pkg/views"
 	"net/http"
 	"strconv"
 )
+
+func ViewCheckins(w http.ResponseWriter, r *http.Request) {
+	authorised := r.Context().Value("authorised").(bool)
+	admin := r.Context().Value("admin").(bool)
+
+	if !authorised || !admin {
+		http.Error(w, "Not authenticated", http.StatusForbidden)
+	}
+	data, err := models.GetDataAdmin()
+	views.RenderTemplate(w, "checkins", data)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+}
+
+func ViewAddBook(w http.ResponseWriter, r *http.Request) {
+	authorised := r.Context().Value("authorised").(bool)
+	admin := r.Context().Value("admin").(bool)
+
+	if !authorised || !admin {
+		http.Error(w, "Not authenticated", http.StatusForbidden)
+	}
+	data, err := models.GetDataAdmin()
+	views.RenderTemplate(w, "add-book", data)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+}
+
+func ViewCheckouts(w http.ResponseWriter, r *http.Request) {
+	authorised := r.Context().Value("authorised").(bool)
+	admin := r.Context().Value("admin").(bool)
+
+	if !authorised || !admin {
+		http.Error(w, "Not authenticated", http.StatusForbidden)
+	}
+	data, err := models.GetDataAdmin()
+	views.RenderTemplate(w, "view-checkouts", data)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+}
+
+func ViewAdminRequests(w http.ResponseWriter, r *http.Request) {
+	authorised := r.Context().Value("authorised").(bool)
+	admin := r.Context().Value("admin").(bool)
+
+	if !authorised || !admin {
+		http.Error(w, "Not authenticated", http.StatusForbidden)
+	}
+	data, err := models.GetDataAdmin()
+	views.RenderTemplate(w, "admin-requests", data)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+}
 
 func AddBook(w http.ResponseWriter, r *http.Request) {
 	// Fetch user authentication data from the context
@@ -79,7 +140,6 @@ func ProcessChecks(w http.ResponseWriter, r *http.Request) {
 }
 
 func ProcessAdminRequests(w http.ResponseWriter, r *http.Request) {
-	// Fetch user authentication data from the context
 	admin := r.Context().Value("admin").(bool)
 	authorised := r.Context().Value("authorised").(bool)
 
