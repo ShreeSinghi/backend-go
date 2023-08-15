@@ -46,7 +46,7 @@ func ViewCheckouts(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Not authenticated", http.StatusForbidden)
 	}
 	data, err := models.GetDataAdmin()
-	views.RenderTemplate(w, "view-checkouts", data)
+	views.RenderTemplate(w, "checkouts", data)
 	if err != nil {
 		log.Fatal(err)
 	}

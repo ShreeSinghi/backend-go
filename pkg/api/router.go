@@ -19,7 +19,7 @@ func Start() {
 	r.HandleFunc("/request-return", controllers.Authenticate(controllers.ViewRequestReturn)).Methods("GET")
 
 	r.HandleFunc("/checkins", controllers.Authenticate(controllers.ViewCheckins)).Methods("GET")
-	r.HandleFunc("/view-checkouts", controllers.Authenticate(controllers.ViewCheckouts)).Methods("GET")
+	r.HandleFunc("/checkouts", controllers.Authenticate(controllers.ViewCheckouts)).Methods("GET")
 	r.HandleFunc("/admin-requests", controllers.Authenticate(controllers.ViewAdminRequests)).Methods("GET")
 	r.HandleFunc("/add-book", controllers.Authenticate(controllers.ViewAddBook)).Methods("GET")
 
