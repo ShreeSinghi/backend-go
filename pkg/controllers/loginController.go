@@ -48,7 +48,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
-	authorised := r.Context().Value("authorised").(bool)
 	log.Println("hey")
 
 	log.Println("hasdasey")

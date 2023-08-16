@@ -9,7 +9,6 @@ import (
 )
 
 func ViewCheckins(w http.ResponseWriter, r *http.Request) {
-	authorised := r.Context().Value("authorised").(bool)
 	admin := r.Context().Value("admin").(bool)
 
 	if !admin {
@@ -24,7 +23,6 @@ func ViewCheckins(w http.ResponseWriter, r *http.Request) {
 }
 
 func ViewAddBook(w http.ResponseWriter, r *http.Request) {
-	authorised := r.Context().Value("authorised").(bool)
 	admin := r.Context().Value("admin").(bool)
 
 	if !admin {
@@ -39,7 +37,6 @@ func ViewAddBook(w http.ResponseWriter, r *http.Request) {
 }
 
 func ViewCheckouts(w http.ResponseWriter, r *http.Request) {
-	authorised := r.Context().Value("authorised").(bool)
 	admin := r.Context().Value("admin").(bool)
 
 	if !admin {
@@ -54,7 +51,6 @@ func ViewCheckouts(w http.ResponseWriter, r *http.Request) {
 }
 
 func ViewAdminRequests(w http.ResponseWriter, r *http.Request) {
-	authorised := r.Context().Value("authorised").(bool)
 	admin := r.Context().Value("admin").(bool)
 
 	if !admin {
@@ -72,7 +68,6 @@ func AddBook(w http.ResponseWriter, r *http.Request) {
 	// Fetch user authentication data from the context
 
 	admin := r.Context().Value("admin").(bool)
-	authorised := r.Context().Value("authorised").(bool)
 
 	title := r.FormValue("title")
 	quantityStr := r.FormValue("quantity")
@@ -131,7 +126,6 @@ func ProcessChecks(w http.ResponseWriter, r *http.Request) {
 
 func ProcessAdminRequests(w http.ResponseWriter, r *http.Request) {
 	admin := r.Context().Value("admin").(bool)
-	authorised := r.Context().Value("authorised").(bool)
 
 	if !admin {
 		http.Error(w, "Not authenticated", http.StatusForbidden)

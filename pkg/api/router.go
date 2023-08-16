@@ -32,6 +32,9 @@ func Start() {
 	r.HandleFunc("/request-checkout", controllers.Authenticate(controllers.RequestCheckout)).Methods("POST")
 	r.HandleFunc("/request-checkin", controllers.Authenticate(controllers.RequestCheckin)).Methods("POST")
 
+	r.NotFoundHandler = http.HandlerFunc(controllers.NotFound)
+
+
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
 	http.ListenAndServe(":8000", r)
