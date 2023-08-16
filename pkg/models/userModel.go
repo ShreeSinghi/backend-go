@@ -21,7 +21,7 @@ func RequestCheckout(bookId int, userId int) (interface{}, error) {
 	}
 
 	var existingRequest int
-	err = db.QueryRow("SELECT COUNT(*) FROM requests WHERE bookId = ? AND userId = ? AND state = 'outrequested'", bookId, userId).Scan(&existingRequest)
+	err = db.QueryRow("SELECT COUNT(*) FROM requests WHERE bookId = ? AND userId = ?", bookId, userId).Scan(&existingRequest)
 	if err != nil {
 		return nil, err
 	}

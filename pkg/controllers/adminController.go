@@ -12,7 +12,7 @@ func ViewCheckins(w http.ResponseWriter, r *http.Request) {
 	authorised := r.Context().Value("authorised").(bool)
 	admin := r.Context().Value("admin").(bool)
 
-	if !authorised || !admin {
+	if !admin {
 		http.Error(w, "Not authenticated", http.StatusForbidden)
 	}
 	data, err := models.GetDataAdmin()
@@ -27,7 +27,7 @@ func ViewAddBook(w http.ResponseWriter, r *http.Request) {
 	authorised := r.Context().Value("authorised").(bool)
 	admin := r.Context().Value("admin").(bool)
 
-	if !authorised || !admin {
+	if !admin {
 		http.Error(w, "Not authenticated", http.StatusForbidden)
 	}
 	data, err := models.GetDataAdmin()
@@ -42,7 +42,7 @@ func ViewCheckouts(w http.ResponseWriter, r *http.Request) {
 	authorised := r.Context().Value("authorised").(bool)
 	admin := r.Context().Value("admin").(bool)
 
-	if !authorised || !admin {
+	if !admin {
 		http.Error(w, "Not authenticated", http.StatusForbidden)
 	}
 	data, err := models.GetDataAdmin()
@@ -57,7 +57,7 @@ func ViewAdminRequests(w http.ResponseWriter, r *http.Request) {
 	authorised := r.Context().Value("authorised").(bool)
 	admin := r.Context().Value("admin").(bool)
 
-	if !authorised || !admin {
+	if !admin {
 		http.Error(w, "Not authenticated", http.StatusForbidden)
 	}
 	data, err := models.GetDataAdmin()
@@ -73,10 +73,6 @@ func AddBook(w http.ResponseWriter, r *http.Request) {
 
 	admin := r.Context().Value("admin").(bool)
 	authorised := r.Context().Value("authorised").(bool)
-
-	if !authorised {
-		http.Error(w, "Not authenticated", http.StatusForbidden)
-	}
 
 	title := r.FormValue("title")
 	quantityStr := r.FormValue("quantity")
@@ -109,12 +105,6 @@ func ProcessChecks(w http.ResponseWriter, r *http.Request) {
 	// Fetch user authentication data from the context
 	admin := r.Context().Value("admin").(bool)
 
-	authorised := r.Context().Value("authorised").(bool)
-
-	if !authorised {
-		http.Error(w, "Not authenticated", http.StatusForbidden)
-	}
-
 	db, err := models.Connection()
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -142,10 +132,6 @@ func ProcessChecks(w http.ResponseWriter, r *http.Request) {
 func ProcessAdminRequests(w http.ResponseWriter, r *http.Request) {
 	admin := r.Context().Value("admin").(bool)
 	authorised := r.Context().Value("authorised").(bool)
-
-	if !authorised {
-		http.Error(w, "Not authenticated", http.StatusForbidden)
-	}
 
 	if !admin {
 		http.Error(w, "Not authenticated", http.StatusForbidden)

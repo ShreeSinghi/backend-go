@@ -51,24 +51,19 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	authorised := r.Context().Value("authorised").(bool)
 	log.Println("hey")
 
-	if !authorised {
-		http.Error(w, "Not authenticated", http.StatusForbidden)
+	log.Println("hasdasey")
 
-	} else {
-		log.Println("hasdasey")
+	oldcookie := r.Header.Get("Cookie")
+	cookieid := oldcookie[strings.Index(oldcookie, "sessionID=")+10:]
+	models.Logout(cookieid)
 
-		oldcookie := r.Header.Get("Cookie")
-		cookieid := oldcookie[strings.Index(oldcookie, "sessionID=")+10:]
-		models.Logout(cookieid)
-
-		cookie := http.Cookie{
-			Name:     "sessionID",
-			Value:    "",
-			MaxAge:   -1,
-			HttpOnly: true,
-		}
-		http.SetCookie(w, &cookie)
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
+	cookie := http.Cookie{
+		Name:     "sessionID",
+		Value:    "",
+		MaxAge:   -1,
+		HttpOnly: true,
 	}
+	http.SetCookie(w, &cookie)
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
 
 }

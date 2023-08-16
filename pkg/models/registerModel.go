@@ -39,7 +39,7 @@ func RegisterUser(username, hash string) (int, error) {
 		return int(userId), nil
 	}
 	if err != nil {
-		panic(err)
+		return 0, err
 	}
 	// fmt.Println("user already exists")
 	return 0, errors.New("user already exists")

@@ -15,6 +15,12 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 
+	data := struct {
+		Error string
+	}{
+		Error: "User already exists",
+	}
+
 	if username == "" || password == "" {
 		http.Error(w, "Empty username or password", http.StatusBadRequest)
 
@@ -31,8 +37,8 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	_, err = models.RegisterUser(username, hash)
 	if err != nil {
-		http.Error(w, "Error registering user", http.StatusInternalServerError)
-		log.Fatal(err)
+		views.RenderTemplate(w, "register", data)
+
 		return
 	}
 

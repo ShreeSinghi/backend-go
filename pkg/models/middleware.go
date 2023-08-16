@@ -1,9 +1,5 @@
 package models
 
-import (
-	"log"
-)
-
 func Authenticate(cookieid string) (int, bool, bool) {
 	db, err := Connection()
 	if err != nil {
@@ -22,7 +18,7 @@ func Authenticate(cookieid string) (int, bool, bool) {
 
 	err = db.QueryRow("SELECT admin FROM users WHERE id = ?;", userId).Scan(&admin)
 	if err != nil {
-		log.Println(err)
+		authorised = false
 	}
 
 	return userId, admin, authorised

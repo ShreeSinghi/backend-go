@@ -51,7 +51,7 @@ func GetDataUser(userId int, checkoutStatus string) (interface{}, error) {
 		book := new(Book)
 		err := rows.Scan(&book.ID, &book.Title, &book.Quantity)
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 
 		if book.Quantity > 0 {
@@ -71,7 +71,7 @@ func GetDataUser(userId int, checkoutStatus string) (interface{}, error) {
 		var request Request
 		err := rows.Scan(&request.ID, &request.bookId, &request.UserId, &request.State)
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 		requestsResult = append(requestsResult, request)
 	}

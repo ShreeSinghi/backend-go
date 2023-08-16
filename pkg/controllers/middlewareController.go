@@ -17,9 +17,14 @@ func Authenticate(next http.HandlerFunc) http.HandlerFunc {
 			cookieid := cookie[strings.Index(cookie, "sessionID=")+10:]
 			userId, admin, authorised := models.Authenticate(cookieid)
 
+			if !authorised {
+				http.Redirect(w, r, "/login", http.StatusSeeOther)
+				return
+			}
+
 			ctx := context.WithValue(r.Context(), "userId", userId)
-			ctx  = context.WithValue(ctx, "admin", admin)
-			ctx  = context.WithValue(ctx, "authorised", authorised)
+			ctx = context.WithValue(ctx, "admin", admin)
+			ctx = context.WithValue(ctx, "authorised", authorised)
 
 			next.ServeHTTP(w, r.WithContext(ctx))
 		}
