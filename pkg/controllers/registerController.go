@@ -23,7 +23,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	if username == "" || password == "" {
 		http.Error(w, "Empty username or password", http.StatusBadRequest)
-
 		return
 	}
 
@@ -31,14 +30,12 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "Error hashing password", http.StatusInternalServerError)
 		log.Fatal(err)
-
 		return
 	}
 
 	_, err = models.RegisterUser(username, hash)
 	if err != nil {
 		views.RenderTemplate(w, "register", data)
-
 		return
 	}
 

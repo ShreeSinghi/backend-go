@@ -9,7 +9,6 @@ import (
 )
 
 func ViewHome(w http.ResponseWriter, r *http.Request) {
-
 	userId := r.Context().Value("userId").(int)
 	admin := r.Context().Value("admin").(bool)
 
@@ -19,9 +18,7 @@ func ViewHome(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Fatal(err)
 		}
-
 	} else {
-
 		data, err := models.GetDataUser(userId, "")
 		views.RenderTemplate(w, "home", data)
 		if err != nil {

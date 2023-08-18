@@ -3,7 +3,6 @@ package models
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"log"
 )
 
@@ -18,7 +17,12 @@ func RegisterUser(username, hash string) (int, error) {
 
 	err = db.QueryRow(`SELECT id FROM users WHERE username = ?`, username).Scan(&userId)
 
-	if err == sql.ErrNoRows {
+	if err != sql.ErrNoRows {
+		if err != nil {
+			return 0, err
+		}
+		return 0, errors.New("user already exists")
+	} else {
 		admin := 0
 
 		// check if this is the first user then make them admin
@@ -26,7 +30,7 @@ func RegisterUser(username, hash string) (int, error) {
 		if err == sql.ErrNoRows {
 			admin = 1
 		}
-		fmt.Println(admin)
+
 		res, err := db.Exec(`INSERT INTO users (username, hash, admin) VALUES (?, ?, ?)`, username, hash, admin)
 		if err != nil {
 			return 0, err
@@ -38,9 +42,4 @@ func RegisterUser(username, hash string) (int, error) {
 		}
 		return int(userId), nil
 	}
-	if err != nil {
-		return 0, err
-	}
-	// fmt.Println("user already exists")
-	return 0, errors.New("user already exists")
 }

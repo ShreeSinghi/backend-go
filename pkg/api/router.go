@@ -2,6 +2,8 @@ package api
 
 import (
 	"mvc/pkg/controllers"
+	"mvc/pkg/middleware"
+
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -10,30 +12,33 @@ import (
 func Start() {
 	r := mux.NewRouter()
 
-	r.HandleFunc("/", controllers.Authenticate(controllers.DefaultHandler)).Methods("GET")
+	// common get requests
+	r.HandleFunc("/", middleware.Authenticate(controllers.DefaultHandler)).Methods("GET")
 	r.HandleFunc("/register", controllers.ViewRegister).Methods("GET")
 	r.HandleFunc("/login", controllers.ViewLogin).Methods("GET")
-	r.HandleFunc("/logout", controllers.Authenticate(controllers.Logout)).Methods("GET")
-	r.HandleFunc("/home", controllers.Authenticate(controllers.ViewHome)).Methods("GET")
+	r.HandleFunc("/logout", middleware.Authenticate(controllers.Logout)).Methods("GET")
+	r.HandleFunc("/home", middleware.Authenticate(controllers.ViewHome)).Methods("GET")
 
-	r.HandleFunc("/request-return", controllers.Authenticate(controllers.ViewRequestReturn)).Methods("GET")
+	// user get requests
+	r.HandleFunc("/request-return", middleware.Authenticate(controllers.ViewRequestReturn)).Methods("GET")
 
-	r.HandleFunc("/checkins", controllers.Authenticate(controllers.ViewCheckins)).Methods("GET")
-	r.HandleFunc("/checkouts", controllers.Authenticate(controllers.ViewCheckouts)).Methods("GET")
-	r.HandleFunc("/admin-requests", controllers.Authenticate(controllers.ViewAdminRequests)).Methods("GET")
-	r.HandleFunc("/add-book", controllers.Authenticate(controllers.ViewAddBook)).Methods("GET")
+	// admin get requests
+	r.HandleFunc("/checkins", middleware.Authenticate(controllers.ViewCheckins)).Methods("GET")
+	r.HandleFunc("/checkouts", middleware.Authenticate(controllers.ViewCheckouts)).Methods("GET")
+	r.HandleFunc("/admin-requests", middleware.Authenticate(controllers.ViewAdminRequests)).Methods("GET")
+	r.HandleFunc("/add-book", middleware.Authenticate(controllers.ViewAddBook)).Methods("GET")
 
+	// post requests
 	r.HandleFunc("/login", controllers.Login).Methods("POST")
 	r.HandleFunc("/register", controllers.Register).Methods("POST")
-	r.HandleFunc("/process-checks", controllers.Authenticate(controllers.ProcessChecks)).Methods("POST")
-	r.HandleFunc("/add-book", controllers.Authenticate(controllers.AddBook)).Methods("POST")
-	r.HandleFunc("/process-admin-requests", controllers.Authenticate(controllers.ProcessAdminRequests)).Methods("POST")
-	r.HandleFunc("/request-admin", controllers.Authenticate(controllers.RequestAdmin)).Methods("POST")
-	r.HandleFunc("/request-checkout", controllers.Authenticate(controllers.RequestCheckout)).Methods("POST")
-	r.HandleFunc("/request-checkin", controllers.Authenticate(controllers.RequestCheckin)).Methods("POST")
+	r.HandleFunc("/process-checks", middleware.Authenticate(controllers.ProcessChecks)).Methods("POST")
+	r.HandleFunc("/add-book", middleware.Authenticate(controllers.AddBook)).Methods("POST")
+	r.HandleFunc("/process-admin-requests", middleware.Authenticate(controllers.ProcessAdminRequests)).Methods("POST")
+	r.HandleFunc("/request-checkout", middleware.Authenticate(controllers.RequestCheckout)).Methods("POST")
+	r.HandleFunc("/request-checkin", middleware.Authenticate(controllers.RequestCheckin)).Methods("POST")
+	r.HandleFunc("/request-admin", middleware.Authenticate(controllers.RequestAdmin)).Methods("POST")
 
 	r.NotFoundHandler = http.HandlerFunc(controllers.NotFound)
-
 
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 

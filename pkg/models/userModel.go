@@ -16,6 +16,7 @@ func RequestCheckout(bookId int, userId int) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
+	
 	if bookQuantity == 0 {
 		return nil, fmt.Errorf("Book is out of stock")
 	}
@@ -25,6 +26,7 @@ func RequestCheckout(bookId int, userId int) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	if existingRequest > 0 {
 		return GetDataUser(userId, "You have already requested this book")
 	}
@@ -69,8 +71,6 @@ func RequestAdmin(userId int) error {
 		return err
 	}
 	defer db.Close()
-
-	fmt.Println(userId)
 
 	_, err = db.Exec("UPDATE users SET requested = true WHERE id = ?", userId)
 	if err != nil {

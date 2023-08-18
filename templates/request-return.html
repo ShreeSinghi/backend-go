@@ -30,8 +30,15 @@
             <a class="nav-link" href="/request-return">Request 'N Return</a>
           </li>
         </ul>
-        <form class="d-flex">
-          <a href="/logout" class="btn btn-outline-danger rounded-rectangle">Logout</a>
+        <form class="d-flex" style="  column-gap: 3vw;">
+          {{if .userData.Requested}}
+            <button id="requestAdminBtn" class="btn btn-outline-secondary" disabled>Requested for admin!</button>
+          {{else}}
+            <form action="/request-admin" method="POST">
+              <button id="requestAdminBtn" type="submit" class="btn btn-outline-secondary">Request Admin Access</button>
+            </form>
+          {{end}}
+          <a href="/logout" class="btn btn-outline-danger">Logout</a>
         </form>
       </div>
     </div>

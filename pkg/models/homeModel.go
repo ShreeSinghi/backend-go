@@ -1,10 +1,5 @@
 package models
 
-import (
-	"fmt"
-	"log"
-)
-
 type Book struct {
 	ID       int    //
 	Title    string //`db:"title"`
@@ -87,15 +82,12 @@ func GetDataUser(userId int, checkoutStatus string) (interface{}, error) {
 		if request.State == "owned" || request.State == "inrequested" {
 			for _, book := range booksResult {
 				if book.ID == request.bookId {
-					log.Println(book)
 					ownedBooks = append(ownedBooks, book)
 					break
 				}
 			}
 		}
 	}
-
-	fmt.Println(booksResult[0])
 
 	data := map[string]interface{}{
 		"books":          booksResult,
@@ -154,13 +146,11 @@ func GetDataAdmin() (interface{}, error) {
 
 	for _, request := range requestsResult {
 		for _, book := range booksResult {
-			fmt.Println(request.bookId, book.ID)
 			if request.bookId == book.ID {
 				request.Title = book.Title
 				break
 			}
 		}
-		fmt.Println(request.Title, request.UserId, request.State)
 		if request.State == "outrequested" {
 			outList = append(outList, request)
 		} else if request.State == "inrequested" {
@@ -176,7 +166,6 @@ func GetDataAdmin() (interface{}, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		fmt.Println("meow")
 		var user User
 		err := rows.Scan(&user.ID, &user.Username, &user.Requested)
 		if err != nil {
@@ -184,8 +173,6 @@ func GetDataAdmin() (interface{}, error) {
 		}
 		usersResult = append(usersResult, user)
 	}
-
-	log.Println(booksResult)
 
 	data := map[string]interface{}{
 		"books":    booksResult,

@@ -10,10 +10,10 @@ import (
 
 func ViewCheckins(w http.ResponseWriter, r *http.Request) {
 	admin := r.Context().Value("admin").(bool)
-
 	if !admin {
 		http.Error(w, "Not authenticated", http.StatusForbidden)
 	}
+
 	data, err := models.GetDataAdmin()
 	views.RenderTemplate(w, "checkins", data)
 	if err != nil {
@@ -24,10 +24,10 @@ func ViewCheckins(w http.ResponseWriter, r *http.Request) {
 
 func ViewAddBook(w http.ResponseWriter, r *http.Request) {
 	admin := r.Context().Value("admin").(bool)
-
 	if !admin {
 		http.Error(w, "Not authenticated", http.StatusForbidden)
 	}
+
 	data, err := models.GetDataAdmin()
 	views.RenderTemplate(w, "add-book", data)
 	if err != nil {
@@ -38,10 +38,10 @@ func ViewAddBook(w http.ResponseWriter, r *http.Request) {
 
 func ViewCheckouts(w http.ResponseWriter, r *http.Request) {
 	admin := r.Context().Value("admin").(bool)
-
 	if !admin {
 		http.Error(w, "Not authenticated", http.StatusForbidden)
 	}
+
 	data, err := models.GetDataAdmin()
 	views.RenderTemplate(w, "checkouts", data)
 	if err != nil {
@@ -52,10 +52,10 @@ func ViewCheckouts(w http.ResponseWriter, r *http.Request) {
 
 func ViewAdminRequests(w http.ResponseWriter, r *http.Request) {
 	admin := r.Context().Value("admin").(bool)
-
 	if !admin {
 		http.Error(w, "Not authenticated", http.StatusForbidden)
 	}
+
 	data, err := models.GetDataAdmin()
 	views.RenderTemplate(w, "admin-requests", data)
 	if err != nil {
@@ -65,13 +65,9 @@ func ViewAdminRequests(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddBook(w http.ResponseWriter, r *http.Request) {
-	// Fetch user authentication data from the context
-
 	admin := r.Context().Value("admin").(bool)
-
 	title := r.FormValue("title")
-	quantityStr := r.FormValue("quantity")
-	quantity, err := strconv.Atoi(quantityStr)
+	quantity, err := strconv.Atoi(r.FormValue("quantity"))
 	if err != nil {
 		http.Error(w, "Invalid quantity", http.StatusBadRequest)
 		return
@@ -97,8 +93,11 @@ func AddBook(w http.ResponseWriter, r *http.Request) {
 }
 
 func ProcessChecks(w http.ResponseWriter, r *http.Request) {
-	// Fetch user authentication data from the context
 	admin := r.Context().Value("admin").(bool)
+	if !admin {
+		http.Error(w, "Not authenticated", http.StatusForbidden)
+		return
+	}
 
 	db, err := models.Connection()
 	if err != nil {
@@ -108,13 +107,7 @@ func ProcessChecks(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	r.ParseForm()
-
 	checkRequests := r.PostForm
-	if !admin {
-		http.Error(w, "Not authenticated", http.StatusForbidden)
-		return
-	}
-
 	err = models.ProcessChecks(checkRequests)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -126,16 +119,13 @@ func ProcessChecks(w http.ResponseWriter, r *http.Request) {
 
 func ProcessAdminRequests(w http.ResponseWriter, r *http.Request) {
 	admin := r.Context().Value("admin").(bool)
-
 	if !admin {
 		http.Error(w, "Not authenticated", http.StatusForbidden)
 		return
 	}
 
 	r.ParseForm()
-
 	requestedUsers := r.PostForm
-	log.Println(requestedUsers)
 	err := models.ProcessAdminRequests(requestedUsers)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
