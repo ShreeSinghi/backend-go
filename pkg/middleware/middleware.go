@@ -52,5 +52,4 @@ func AuthenticateDB(cookieid string) (int, bool, bool) {
 	}
 
 	return userId, admin, authorised
-
 }

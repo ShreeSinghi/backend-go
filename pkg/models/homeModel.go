@@ -1,31 +1,31 @@
 package models
 
 type Book struct {
-	ID       int    //
-	Title    string //`db:"title"`
-	Quantity int    //`db:"quantity"`
+	ID       int   
+	Title    string
+	Quantity int    
 }
 
 type Request struct {
-	ID     int    // `db:"id"`
-	bookId int    //`db:"book_id"`
-	UserId int    //`db:"user_id"`
-	State  string //`db:"state"`
-	Title  string // not unpacked by db directly
+	ID     int 
+	bookId int    
+	UserId int    
+	State  string
+	Title  string 
 
 }
 
 type User struct {
-	ID        int    //`db:"id"`
-	Username  string // `db:"username"`
-	Requested bool   // `db:"requested"`
+	ID        int  
+	Username  string 
+	Requested bool   
 	Admin     bool
 }
 
 type Cookie struct {
-	ID        int    // `db:"id"`
-	UserId    int    //`db:"UserId"`
-	SessionID string //`db:"sessionId"`
+	ID        int  
+	UserId    int    
+	SessionID string 
 }
 
 func GetDataUser(userId int, checkoutStatus string) (interface{}, error) {
@@ -52,7 +52,6 @@ func GetDataUser(userId int, checkoutStatus string) (interface{}, error) {
 		if book.Quantity > 0 {
 			booksResult = append(booksResult, book)
 		}
-
 	}
 
 	var requestsResult []Request
@@ -95,7 +94,6 @@ func GetDataUser(userId int, checkoutStatus string) (interface{}, error) {
 		"ownedBooks":     ownedBooks,
 		"checkoutStatus": checkoutStatus,
 	}
-
 	return data, nil
 }
 
